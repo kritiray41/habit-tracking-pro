@@ -36,26 +36,21 @@ export async function addHabit(uid, name) {
   const cleanName = name.trim().toLowerCase();
   const habitsRef = collection(db, "users", uid, "habits");
 
-  await runTransaction(db, async transaction => {
-    const q = query(habitsRef, orderBy("createdAt"));
-    const snap = await transaction.get(q);
+  // First, check if habit already exists (outside transaction)
+  const snap = await getDocs(habitsRef);
+  const exists = snap.docs.some(d => d.data().name.toLowerCase() === cleanName);
+  if (exists) throw new Error("Habit already exists");
 
-    const exists = snap.docs.some(
-      d => d.data().name.toLowerCase() === cleanName
-    );
-
-    if (exists) throw new Error("Habit already exists");
-
-    const newRef = doc(habitsRef);
-    transaction.set(newRef, {
-      name,
-      streak: 0,
-      badge: "None",
-      lastCompleted: null,
-      createdAt: serverTimestamp()
-    });
+  // Add new habit
+  await addDoc(habitsRef, {
+    name: name.trim(),
+    streak: 0,
+    badge: "None",
+    lastCompleted: null,
+    createdAt: serverTimestamp()
   });
 }
+
 
 /* LISTEN HABITS */
 export function listenToHabits(uid, callback, onError) {
