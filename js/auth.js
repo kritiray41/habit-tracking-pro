@@ -1,5 +1,3 @@
-// js/auth.js
-
 import { auth } from "./firebase.js";
 import {
   GoogleAuthProvider,
@@ -10,8 +8,16 @@ import {
 
 const provider = new GoogleAuthProvider();
 
-export function login() {
-  return signInWithPopup(auth, provider);
+export async function login() {
+  try {
+    const res = await signInWithPopup(auth, provider);
+    console.log("LOGIN SUCCESS", res.user);
+    return res;
+  } catch (err) {
+    console.error("AUTH ERROR OBJECT:", err);
+    alert(err.code + "\n" + err.message);
+    throw err;
+  }
 }
 
 export function logout() {

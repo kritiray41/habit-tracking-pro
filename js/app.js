@@ -1,14 +1,7 @@
-// js/app.js
-
 import { login, logout, observeAuth } from "./auth.js";
-import {
-  addHabit,
-  listenToHabits,
-  markHabitDone
-} from "./habits.js";
+import { addHabit, listenToHabits, markHabitDone } from "./habits.js";
 
-/* ================= DOM ================= */
-
+/* DOM */
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const habitSection = document.getElementById("habit-section");
@@ -19,8 +12,7 @@ const habitList = document.getElementById("habitList");
 let unsubscribeHabits = null;
 let currentUserId = null;
 
-/* ================= AUTH ================= */
-
+/* AUTH */
 loginBtn.onclick = () => login();
 logoutBtn.onclick = () => logout();
 
@@ -30,7 +22,6 @@ observeAuth(user => {
     loginBtn.hidden = true;
     logoutBtn.hidden = false;
     habitSection.hidden = false;
-
     startHabitListener();
   } else {
     currentUserId = null;
@@ -38,13 +29,11 @@ observeAuth(user => {
     logoutBtn.hidden = true;
     habitSection.hidden = true;
     habitList.innerHTML = "";
-
     if (unsubscribeHabits) unsubscribeHabits();
   }
 });
 
-/* ================= HABITS ================= */
-
+/* HABITS */
 addHabitBtn.onclick = async () => {
   const name = habitInput.value;
   if (!name) return;
